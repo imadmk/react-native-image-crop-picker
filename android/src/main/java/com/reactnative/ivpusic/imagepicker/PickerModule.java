@@ -729,7 +729,6 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
 
     private void startCropping(final Activity activity, final Uri uri) {
         UCrop.Options options = new UCrop.Options();
-        options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
         options.setCompressionQuality(100);
         options.setCircleDimmedLayer(cropperCircleOverlay);
         options.setFreeStyleCropEnabled(freeStyleCropEnabled);
@@ -750,12 +749,29 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
             );
         }
 
+        String extension = getExtension(activity.getApplicationContext(), uri);
+
+        if (extension == '' || extension == null) {
+            extension = "jpg";
+        }
+
+        switch (extension.toLowerCase()) {
+            case "png":
+                options.setCompressionFormat(Bitmap.CompressFormat.PNG);
+                break;
+            case "jpg":
+            case "jpeg":
+            default:
+                options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
+                break;
+        }
+
         if (!disableCropperColorSetters) {
             configureCropperColors(options);
         }
 
         UCrop uCrop = UCrop
-                .of(uri, Uri.fromFile(new File(this.getTmpDir(activity), UUID.randomUUID().toString() + ".jpg")))
+                .of(uri, Uri.fromFile(new File(this.getTmpDir(activity), UUID.randomUUID().toString() + "." + extension)))
                 .withOptions(options);
 
         if (width > 0 && height > 0) {
