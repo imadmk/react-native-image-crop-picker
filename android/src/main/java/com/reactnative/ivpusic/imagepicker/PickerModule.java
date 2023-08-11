@@ -751,7 +751,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
 
         String extension = getExtension(activity.getApplicationContext(), uri);
 
-        if (extension == '' || extension == null) {
+        if (extension == null || extension.isEmpty()) {
             extension = "jpg";
         }
 
